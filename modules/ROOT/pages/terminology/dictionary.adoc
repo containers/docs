@@ -1,0 +1,77 @@
+=== Dictionary
+
+When discussing containerization, it’s important to have a solid grasp on the related vocabulary. One of the challenges people have is that many of the following terms
+are used interchangeably. It can be confusing, especially for newcomers.
+
+The goal of this section is to clarify these terms, so that we can speak the same language.
+
+==== Container Image
+
+Container image is a filesystem tree that includes all of the requirements for running a container, as well as metadata describing the content. You can think of it as a packaging technology.
+
+==== Container
+
+A container is composed of two things: a writable filesystem layer on top of a container image, and a traditional linux process.
+Multiple containers can run on the same machine and share the OS kernel with other containers, each running as an isolated processes in the user space.
+Containers take up less space than VMs (application container images are typically tens of MBs in size), and start almost instantly.
+
+==== Repository
+
+When using the `docker` command, a repository is what is specified on the command line, not an image. In the following command, “fedora” is the repository.
+
+```
+docker pull fedora
+```
+
+This is actually expanded automatically to:
+
+```
+docker pull docker.io/library/fedora:latest
+```
+
+This can be confusing, and many people refer to this as an image or a container image. In fact, the docker images sub-command is what is used to list the locally available repositories. Conceptually, these repositories can be thought about as container images, but it’s important to realize that these repositories are actually made up of layers.
+
+When we specify the repository on the command line, the Docker daemon is doing some extra work for you. The Docker daemon (not the client tool) is configured with a list of servers to search. In our example above, the daemon will search for the “fedora” repository on each of the configured servers.
+
+In the above command, only the repository name was specified, but it’s also possible to specify a full URL address with the Docker client. To highlight this, let’s start with dissecting a full address.
+
+```
+REGISTRY[:PORT]/NAMESPACE/REPOSITORY[:TAG]
+```
+
+The full URL is made up of a standard server name, a namespace, and optionally a tag. There are actually many permutations of how to specify a URL and as you explore the Docker ecosystem, you will find that many pieces are optional. The following commands are all valid and all pull some permutation of the same repository:
+
+```
+docker pull docker.io/library/fedora:latest
+docker pull docker.io/library/fedora
+docker pull library/fedora
+docker pull fedora
+```
+
+==== Image Layer
+
+Repositories are often referred to as images or container images, but actually they are made up of one or more layers.
+Image layers in a repository are connected together in a parent-child relationship. Each image layer represents some pieces of the final container image.
+
+==== Container Registry
+A registry server, is essentially a fancy file server that is used to store Docker repositories.
+Typically, the registry server is specified as a normal DNS name and optionally a port number to connect to.
+Much of the value in the Docker ecosystem comes from the ability to push and pull repositories from registry servers.
+
+When a Docker daemon does not have a locally cached copy of a repository, it will automatically pull it from a registry server.
+Usually the default registry is set to docker.io (Docker Hub). It is important to stress, that there is implicit trust in the registry server.
+
+You must determine how much you trust the content provided by the registry and you may want to allow or block certain registries.
+In addition to security, there are other concerns such as users having access to licensed software and compliance issues.
+The simplicity with which Docker allows users to pull software makes it critical that you trust upstream content.
+
+==== Namespace
+
+A namespace is a tool for separating groups of repositories.
+On the public DockerHub, the namespace is typically the username of the person sharing the image, but can also be a group name, or a logical name.
+
+==== Tag
+
+When an image builder creates a new repository, they will typically label the best image layers to use.
+These are called tags and typically map to versions of software contained in the repository.
+In other words, tags are how various images in a repository are distinguished from each other.

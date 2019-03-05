@@ -1,0 +1,50 @@
+= Fedora Container Build System
+
+In order to get a better understanding of the big picture of how all this works, Container Maintainers might find the https://docs.pagure.org/releng/layered_image_build_service.html[Layered Image Build Service Architecture Document] interesting. However, extensive coverage of the Build System is out of the scope of this Guidelines document.
+
+
+== Fedora Base Image
+
+The Fedora Base Image provides information that can be used by the Layered Images via inherited Environment Variables:
+
+* `$DISTTAG` is defined just as it is for RPMs, but since Dockerfiles lack a mechanism similar to RPM Macros this is being stored in the base image such that it can be inherited by layered images.
+
+
+== Fedora Container Registries and Updates
+
+In Fedora there are two Registries: candidate and stable.
+
+All Layered Image Builds end up in the candidate registry as soon as they are successful in the Fedora Layered Image Build System. These images can immediately be pulled (example using docker: `docker pull candidate-registry.fedoraproject.org/$FGC/$NAME:latest`).
+
+Gated releases will happen on a Two Week Cadence, alternating with the Fedora Two Week Atomic Host.
+
+
+=== Registry Layout
+
+Fedora Base Images will be available at the "root" namespace of the registry, an example is below:
+
+```
+https://candidate-registry.fedoraproject.org/fedora:24
+https://candidate-registry.fedoraproject.org/fedora:25
+https://candidate-registry.fedoraproject.org/fedora:latest
+
+https://registry.fedoraproject.org/fedora:24
+https://registry.fedoraproject.org/fedora:25
+https://registry.fedoraproject.org/fedora:latest
+```
+
+Fedora Layered Images will be available in their respective `$FGC` namespace which correlates to their DistGit branch and Koji tag. An example is as follows for the `f25` Fedora Generational Core and the cockpit container image.
+
+There are multiple tags applied to each image:
+* `Name:Version-Release` (including `$DISTTAG`)
+* `Name:Version`
+* `Name:latest`
+** The :latest tag can be omitted when issuing a `docker pull` command.
+
+The latter two tags are updated in-place and a new execution of `docker pull` will get the latest image.
+
+```
+https://candidate-registry.fedoraproject.org/cockpit:latest
+
+https://registry.fedoraproject.org/cockpit:latest
+```

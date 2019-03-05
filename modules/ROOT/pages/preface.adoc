@@ -1,0 +1,13 @@
+:experimental:
+
+= Preface
+
+
+== Invitation to Collaborate
+
+For suggestions, feedback, or to report issues with this page please contact the https://pagure.io/ContainerSIG/container-sig/issues[Fedora Container SIG].
+
+
+== Acknowledgments
+	
+Certain portions of this document first appeared in the [citetitle]_Project Atomic Container Best Practices_, © 2014–2018 Project Atomic and others, published at link:++http://docs.projectatomic.io/container-best-practices/++[].

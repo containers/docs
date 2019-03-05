@@ -1,0 +1,26 @@
+  PostgreSQL 9.6 image, for supplying PostgreSQL within a Kubernetes stack.
+  Includes all of "contrib", but does not include PostGIS or any automated replication management.
+  
+  Volumes:
+  pg-config: usually mapped to /etc/postgresql/, contains the configuration files for PostgreSQL, 
+    including postgresql.conf and pg_hba.conf. Read-only within the container.  
+    Should map to local storage.
+  pg-data: usually mapped to /var/lib/pgsql/data, contains database data.  Should be stored in 
+    a persistent volume or network storage of some kind.  Requires high-throughput, read-write storage.
+  
+  Ports:
+  5432: the PostgreSQL data port using the pgsql protocol.
+  
+  Documentation:
+  See https://www.postgresql.org/docs/9.6/static/index.html
+  
+  Requirements:
+  This is a transactional database, and requires 256MB of RAM and at 
+  least one dedicated core.  If heavily used, can require much greater system resources.
+  
+  Configuration:
+  Sample postgresql.conf and pg_hba.conf files are supplied in the image.  For further documentation, 
+    please see the PostgreSQL docs.  Note that these files must be readable by the "postgres" user 
+    inside the container.
+  The database system is initialized with the admin user/password of postgres/postgres.  If you wish
+    to override this, supply the ENV vars ADMIN_USER and ADMIN_PASS inside the container at initialization time.

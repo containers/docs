@@ -1,0 +1,182 @@
+:experimental:
+== Container Image Creation
+
+Container images in Fedora are built using a https://docs.docker.com/engine/reference/builder/[Dockerfile] much in the same way an http://rpm.org/[RPM] is built using a spec file. In this section are Fedora Guidelines for creating Container images using a Dockerfile.
+
+
+=== Dockerfile Example
+[source]
+----
+include::{examplesdir}/Dockerfile.example[]
+----
+
+
+=== FROM
+As defined by the Dockerfile reference, the FROM instruction '''must''' be the first line of a Dockerfile.  The FROM instruction '''must''' be fully-qualified with the fedora registry name, image name, and tag as shown in this example:
+
+```
+FROM registry.fedoraproject.org/imagename:tag
+```
+
+This provides a guarantee of where the base image is coming from when being built by the build service or when rebuilt by a user.
+
+For most layered images built by the https://docs.pagure.org/releng/layered_image_build_service.html[Fedora Layered Docker Image Build Service], the FROM line will use one of the Fedora base images that exist on the https://registry.fedoraproject.org/[Fedora Container Registry]:
+
+```
+FROM registry.fedoraproject.org/fedora:latest
+```
+
+It is also possible to use another layered image as the base layer, as in this example:
+
+```
+FROM registry.fedoraproject.org/f25/kubernetes-master:latest
+```
+
+
+=== Labels
+
+Dockerfiles have a concept of a https://docs.docker.com/engine/reference/builder/#label[LABEL] which can add arbitrary metadata to an image as a key-value pair. Fedora Guidelines on the topic of LABELs follows the http://www.projectatomic.io/[Project Atomic] https://github.com/projectatomic/ContainerApplicationGenericLabels[Container Application Generic Labels] standards for LABEL definition.
+
+'''Required''' LABELs for a Fedora Layered Image are as follows:
+
+[cols="2*", options"header"]
+|===
+|Name
+|Description
+
+|com.redhat.component
+|The Bugzilla component name where bugs against this container should be reported by users.
+
+|name
+|Name of the Image
+
+|version
+|Version of the image
+
+|architecture
+|Architecture the software in the image should target (Optional: if omitted, it will be built for all supported Fedora Architectures)
+
+|maintainer
+|The name and email of the maintainer (usually the submitter)
+
+|run or usage
+|Either provides an Atomic run line, or a human readable example of container execution
+
+|summary
+|A short description of the image.
+|===
+
+'''Optional''' labels for Fedora Layered Images
+
+[cols="2*", options"header"]
+|===
+|Name
+|Description
+
+|install
+|Powers "atomic install" command. Not used for system containers.
+
+|uninstall
+|Powers "atomic uninstall" command.  Required if Install is present.
+
+|url
+|A URL where the user can find more information about the image.
+
+|help
+|A runnable command which results in display of Help information.
+
+|atomic.type
+|Used for system containers, see below.
+
+|Generics
+|Any of the https://github.com/projectatomic/ContainerApplicationGenericLabels[Container Application Generic Labels] which are appropriate to the container, such as "stop", "debug", or "changelog-url"
+|===
+
+See LABEL SPECIFICATION below for more details on what's required for each of these labels.
+
+{{admon/note|Dockerfile Label Guidelines Upstream|
+The LABELs used here are meant to be a Fedora adaptation of the upstream https://projectatomic.io[Project Atomic] effort to define https://github.com/projectatomic/ContainerApplicationGenericLabels[Container Application Generic Labels] as well as http://docs.projectatomic.io/container-best-practices/[Container Best Practices].
+}}
+
+These LABELs should be defined in a single line of the Dockerfile such that they don't each lead to another layer in the build. The following is a very simple Dockerfile example containing the required LABELs:
+
+[source]
+----
+include::{examplesdir}/Dockerfile.example[]
+----
+
+
+=== LABEL SPECIFICATION
+
+Some additional details about how each label is to be populated.
+
+'''com.redhat.component''': Existing Bugzilla component against which bugs in this image should be reported.
+
+'''name''': Name of the image.  If the image replaces a standard RPM, it should have the exact same name of that RPM.  Otherwise, please see naming guidelines above.
+
+'''version''': Usually 0.  Populated from the ENV variable.  See "VERSIONING" below for explanation.
+
+'''architecture''': usually "x86_64", unless the container image supports other/all architectures.
+
+'''usage''': a human-readable example command line for invoking the container. Required if run is not present.  Should include all likely options, such as ports, volumes, and any required command-line parameters. You may use any container runtime as your example. Example from the OwnCloud container:
+
+    usage="docker run -d -P -v owncloud-data:/var/lib/owncloud -v owncloud-config:/etc/owncloud owncloud"
+
+'''summary''': A short description of the image, intended to be searchable once we have a registry with search functionality.  Please include relevant keywords.
+
+'''run''': a command line to invoke the container, suitable for use by the https://github.com/projectatomic/atomic[Atomic CLI], including placeholders and the embedded atomic-run code.  Must successfully execute on a suitable Fedora Atomic system. Required if "usage" is not present.  Example for the Cockpit container:
+
+    run="/usr/bin/docker run -d --privileged --pid=host -v /:/host IMAGE /container/atomic-run --local-ssh"
+
+'''install''': A container may require preparation of the host system before the container can be run. In this case the install label is useful for defining what operations should be performed on the host to prepare it. The set of operations should be as minimal as possible and should not include any operation that is not useful for preparing the host to run the container. If an install label is provided then it must be tested and work with the https://github.com/projectatomic/atomic[Atomic CLI]. Optionally an uninstall label should also be provided that will allow for cleaning up any operations done by install. Please refer to the https://github.com/projectatomic/atomic#atomic-install[upstream documentation] for more information.  Example for the Cockpit container:
+
+    install="/usr/bin/docker run --rm --privileged -v /:/host IMAGE /container/atomic-install"
+
+'''uninstall''': If a container has an install label then most likely an uninstall label will be needed in order to delete any files and/or to clean up any configuration that was done or to the host system. It is not required to delete files that may contain user data. In unusual cases there may be no files or configuration to clean up from the install label so the uninstall label might not be needed. If an uninstall label is provided then it must be tested and work with the https://github.com/projectatomic/atomic[Atomic CLI]. Please refer to the https://github.com/projectatomic/atomic#atomic-uninstall[upstream documentation] for more information.
+
+    uninstall="/usr/bin/docker run --rm --privileged -v /:/host IMAGE /container/atomic-uninstall"
+
+'''url''': A URL where users can get more information about the image, such as a github or pagure repository, or software documentation.
+
+'''help''': A runnable command which outputs a man page or other "help" information.  If supplied, must be tested with `atomic help`.  If you have a help command, you do not need to also supply a Help File (see below).
+
+
+=== Versioning
+
+In the previous section there was coverage of LABELs, one of those is the Version that is set in the example using the `ENV` variable `VERSION` which at this time needs to be `0`. OSBS handle automatically the increase of the release number for a given version of the container image.
+
+At this time there is no way to automatically populate the `Version`/`VERSION` value with the same value of the latest version of the primary RPM belonging to the container image. This is something that is currently https://pagure.io/atomic-wg/issue/249[on the roadmap].
+
+Why is this needed?
+
+If we set the `Version` LABEL to the version of it's respective RPM at the time of the Container Image Review, then the maintainer will constantly have to update it by hand every time there is a RPM update which is inconvenient and error prone. Beyond that, there's a possibility that the version of the RPM could be updated by the layered image automatic rebuilds and the maintainer isn't able to update the `Dockerfile` in a timely manner (Automatic Rebuilds are done by https://docs.pagure.org/releng/[Release Engineering] in order to pull in security updates for all layered images). If this were to happen, then the version of the container image will not match the version of the software it's meant to deliver which would lead to confusion and potentially unexpected negative side effects for users. Therefore, for the time being we're saying that the version number of the container is not meaningful but it will be as soon as possible.
+
+
+=== CMD / ENTRYPOINT
+
+Another item required is a CMD or ENTRYPOINT entry so that when an user were run perform the following command (for example), expected behavior occurs.:
+
+```
+docker run registry.fedoraproject.org/f25/myawesomecontainer
+```
+
+For more information on these entries, please reference the upstream https://docs.docker.com/engine/reference/builder/[Dockerfile documentation].
+
+
+=== Volumes
+
+The use of container volumes for persistent data is permitted and encouraged, but the following guidelines need to be followed:
+
+* Any user data that would be at risk of loss on update '''must''' be in a volume.
+* Any application configuration data that requires persistence '''must''' be in a volume.  Configuration by environment variables instead is also allowed, either together or instead of configuration volumes.
+* All volumes listed in the Dockerfile '''must''' be listed in the Help File.
+* The example run command '''should''' have the volume with a persistent name (e.g. "docker run -d -v owncloud-data:/var/lib/owncloud -v owncloud-config:/etc/owncloud owncloud")
+* Volumes '''must''' be defined as narrowly as possible.  Specifically, unless the image is intended for use as a system container intended for system administration, volumes must be defined so as to mount system directories which are exclusive to the container. For example, the container must mount /etc/application-name/ for config files, ''not'' /etc/.
+
+Each volume in the Help File '''must''' have the following:
+* The full path of the volume
+* Why it is marked a volume (such as why this config needs persistence or indicating user data lives there)
+
+Volumes listed in the Help File '''should''' also include information about space, permissions, and performance requirements.
+
+The readme '''may''' contain suggested additional volumes that aren't made mandatory by the Dockerfile, such as locations for generated, rather than self signed, ssl certificates.

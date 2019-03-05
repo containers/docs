@@ -1,0 +1,78 @@
+=== Image Types
+
+
+==== Base Images
+
+A base image is one of the simplest types of images, but you will find a lot of definitions.
+Sometimes users will also refer an application image as the “base image.”
+However, technically, this is not a base image, these are link:#intermediate_images[Intermediate images].
+
+Simply put, a base image is an image that has no parent layer. Typically, a base image contains a fresh copy of an operating system.
+Base images normally include core system tools, such as bash or coreutils and tools necessary to install packages and make updates to the image over time (yum, rpm, apt-get, dnf, microdnf...)
+While base images can be “hand crafted”, in practice they are typically produced and published by open source projects (like Debian, Fedora or CentOS) and vendors (like Red Hat).
+The provenance of base images is critical for security. In short, the sole purpose of a base image is to provide a starting place for creating your derivative images.
+When using a Dockerfile, the choice of which base image you are using is explicit:
+```
+FROM registry.fedoraproject.org/fedora
+```
+
+
+==== Builder Images
+
+These are a specialized form of container images which produce application container images as offspring.
+They include everything but a developer's source code. Builder images include operating system libraries, language runtimes, middleware, and the source-to-image tooling.
+
+When a builder image is run, it injects the developers source code and produces a ready-to-run offspring application container image.
+This newly created application container image can then be run in development or production.
+
+For example, if a developer has PHP code and they want to run it in a container, they can use a PHP builder image to produce a ready to run application container image.
+The developer passes the GitHub URL where the code is stored and the builder image does the rest of the work for them.
+The output of a Builder container is an Application container image which includes Red Hat Enterprise Linux, PHP from Software Collections, and the developer’s code, all together, ready to run.
+Builder images provide a powerful way to go from code to container quickly and easily, building off of trusted components.
+
+Some Builder images are created in a way that allows developers to not only provide their source code, but also custom configuration for software built into the image.
+One such example is the https://github.com/openshift/source-to-image/tree/master/examples/nginx-centos7#configuring-nginx[Nginx Builder image] in the source-to-image upstream repository.
+
+
+==== Intermediate Images
+
+An Intermediate image is any container image which relies on a base image. Typically, core builds, middleware and language runtimes are built as layers on “top of” a base image.
+These images are then referenced in the FROM directive of another image. These images are not used on their own, they are typically used as a building block to build a standalone image.
+
+It is common to have different teams of specialists own different layers of an image.
+Systems administrators may own the core build layer, while “developer experience” may own the middleware layer.
+Intermediate Images are built to be consumed by other teams building images, but can sometimes be ran standalone too, especially for testing.
+
+
+==== Intermodal Images
+
+Intermodal container images are images that have hybrid architectures. For example, many Red Hat Software Collections images can be used in two ways.
+
+First, they can be used as simple Application Containers running a fully contained Ruby on Rails and Apache server.
+
+Second, they can be used as Builder Images inside of OpenShift Container Platform.
+In this case, the output child images which contain Ruby on Rails, Apache, and the application code which the source-to-image process was pointed towards during the build phase.
+
+The intermodal pattern is becoming more and more common to solve two business problems with one container image.
+
+
+==== Deployer Images
+
+A deployer image is a specialized kind of container which, when run, deploys or manages other containers.
+This pattern enables sophisticated deployment techniques such as mandating the start order of containers, or first run logic such as populating schema or data.
+
+// TBD: Container patterns could nicely add to this
+
+
+==== Containerized Components
+
+A container that is meant to be deployed as part of a larger software system, not on its own. Two major trends are driving this.
+
+First, microservices are driving the use of best-of-breed components - this is also driving the use of more components combined together to build a single application.
+Containerized components are meeting the need to deploy an expanding quantity of complex software more quickly and easily.
+
+Second, not all pieces of software are easy to deploy as containers. Sometimes, it makes sense to containerize only certain
+components which are easier to move to containers or provide more value to the overall project. With multi-service application, some services may be deployed as containers, while others may be deployed through traditional a traditional methodology such as an RPM or installer script.
+
+It’s important to understand that containerized components are not designed to function on their own.
+They provide value to a larger piece of software, but provide very little value on their own.

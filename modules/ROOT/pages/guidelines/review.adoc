@@ -1,0 +1,82 @@
+== Review Purpose
+
+In order for a new container Layered Image to be added to Fedora, the container layered image must first undertake a formal review much like the https://fedoraproject.org/wiki/Package_Review_Process[RPM Package Review process].
+
+The purpose of this formal review is to try to ensure that the container layered image meets the quality control requirements for Fedora.
+
+Reviews are currently done for totally new container layered images, container layered image renames, old container layered images that were once deprecated returning to the collection, and containers merged from the old Fedora image repository.
+
+Container Layered Images are not required to share a 1:1 relationship with RPM Packages but can instead deliver multiple RPM Packages (such as dependencies) in order to distribute a fully functional container. However naming of the container should be based on the main service or software it aims to deliver.
+
+There are two roles in the review process, that of the contributor and that of the reviewer. In this document, we'll present both perspectives.
+
+=== Contributor
+
+A Contributor is defined as someone who wants to submit (and maintain) a new Container Layered Image in Fedora.  To become a contributor, you must follow the detailed instructions to https://fedoraproject.org/wiki/Join_the_package_collection_maintainers[Join the package collection maintainers].
+
+As a Contributor, you should only be creating containers out of pre-existing software in the Fedora RPM repositories which adheres to the https://docs.fedoraproject.org/en-US/containers/guidelines/guidelines/[Guidelines].
+
+==== Dockerfiles
+
+* Put your Dockerfile, accompanying configuration files, and control scripts somewhere on the Internet where it can be directly downloaded (just HTTP(s), no registration pages or special download methods, please).  If you have no access at all and would like space, please visit https://pagure.io/packager-sponsors[The sponsors ticket system], log in, and file a ticket with component "Initial package hosting request".  You will be given access to https://fedorapeople.org/[Fedorapeople].
+
+* Fill out a http://red.ht/2qtgK7S[request for review in bugzilla]. Summary field needs to be in format of `Container Review Request:..`. If the `:` is omitted the fedpkg tool's request-repo will error out.
+
+* If you do not have any package or container layered image already in Fedora, this means you need a sponsor and to add FE-NEEDSPONSOR (Bugzilla id:177841) to the bugs being blocked by your review request. For more information read the [[How to get sponsored into the packager group]] wiki page.
+
+* Wait for someone to review your Dockerfile! At this point in the process, the '''fedora-review flag''' is blank, meaning that no reviewer is assigned.
+
+If nobody comments on your review request, you might want to mail to a mailing list (devel@list.fedoraproject.org) asking for a "review swap".  This is an offer to do a review of someone else's Dockerfile in exchange for them reviewing your Dockerfile.  This is usually one-for-one, or can be some other private arrangement depending on the difficulty of the respective packages.
+
+* There may be comments from people that are not formally reviewing the package, they may add NotReady to the Whiteboard field, indication that the review request is not yet ready, because of some issues they report. After you have addressed them, please post the URLs to the updated Dockerfile and associated files and remove it from the Whiteboard.  It is expected that you will respond to commentary, including updating your submission to address it; if you do not, your ticket will be closed.
+
+* A reviewer takes on the task of reviewing your package. They will set the '''fedora-review flag''' to '''?'''
+
+* The reviewer will review your Dockerfile. You should fix any blockers that the reviewer identifies. Once the reviewer is happy with the package, the '''fedora-review''' flag will be set to '''+''', indicating that the package has passed review.
+
+* At this point, you need to make an https://fedoraproject.org/wiki/PackageDB_admin_requests[SCM admin request] for your newly approved Layered Image.  If you have not yet been sponsored, you will not be able to progress past this point. (You will need to make sure to request the container namespace in src.fedorproject.org)
+* Checkout the package using "fedpkg clone container/<container-name>" do a final check of Dockerfile, etc.
+* When this is complete, you can add relevant container files into the SCM. Required files should be:
+ * Dockerfile
+ * help.md file
+* Request a build by running "fedpkg container-build".
+* Repeat the process for other branches you may have requested. (NOTE: The FROM line in the Dockerfile for each branch will need to reflect which Fedora release distgit branch it is in or else the builds will collide in koji)
+* You should make sure the review ticket is closed.  You are welcome to close it once the Container Layered Image has been built on the requested branches, or if you built for one of the Fedora release branches you can ask Bodhi to close the ticket for you when it completes the process.  If you close the ticket yourself, use '''NEXTRELEASE''' as the resolution.
+
+You do not need to go through the review process again for subsequent Container Layered Image changes for this Layered Image.
+
+=== Reviewer
+
+The Reviewer is the person who chooses to review a package.
+
+Other people are encouraged to comment on the review request as well. Especially people searching for sponsorship should comment other review requests to show, that they know the https://docs.fedoraproject.org/en-US/containers/guidelines/guidelines/[Container Guidelines].
+
+The Reviewer can be any Fedora account holder who is a member of the https://admin.fedoraproject.org/accounts/group/members/packager/*[packager group].  (If the Contributor is not yet sponsored, the review can still proceed to completion but they will need to find a sponsor at some point.)
+
+
+* Search for a review request that needs a reviewer: https://bugzilla.redhat.com/buglist.cgi?component=Container%20Review&list_id=9912775&product=Fedora%20Container%20Images
+
+* If you notice some issues that need to be solved before you want to start a formal review, add these issues in a comment and set the Whiteboard of the bug to contain NotReady. This helps other possible reviewers to notice that the review request is not yet ready for further review action.
+
+* if you want to formally review the Dockerfile, set the '''fedora-review''' flag to '''?''' and assign the bug to yourself.
+
+If you want to step back from the review for any reason, reset the <code>fedora-review</code> flag to be blank '''and''' reassign the bug to the default owner of the component, which is '''nobody@fedoraproject.org'''
+
+==== Review the package
+* Go through the MUST items listed in https://docs.fedoraproject.org/en-US/containers/guidelines/guidelines/[Container Guidelines].
+* Go through the SHOULD items in https://docs.fedoraproject.org/en-US/containers/guidelines/guidelines/[Container Guidelines].
+
+* Include the text of your review in a comment in the ticket.  For easy readability, simply use a regular comment instead of an attachment.
+
+* Take one of the following actions:
+* '''ACCEPT''' - If the container layered image is good, set the '''fedora-review''' flag to '''+'''
+
+If the Reviewer is also acting as Sponsor for the Contributor, then this is the time to sponsor the Contributor.
+
+* '''FAIL, LEGAL''' - If the container layered image is legally risky for whatever reason (known patent or copyright infringement, trademark concerns) close the bug WONTFIX and leave an appropriate comment (i.e. we don't ship mp3). Set the '''fedora-review''' flag to '''-''', and have the review ticket block FE-Legal.
+
+* '''FAIL, OTHER''' - If the container layered image is just way off or unsuitable for some other reason, and there is no simple fix, then close the bug WONTFIX and leave an appropriate comment (i.e. we don't package pornography for redistribution, sorry. Or, this isn't a specfile, it's a McDonald's menu, sorry.) Set the '''fedora-review''' flag to '''-'''.
+
+* '''NEEDSWORK''' - Anything that isn't explicitly failed should be left open while the submitter and reviewer work together to fix any potential issues. Mark the bug as NEEDINFO while waiting for the reviewer to respond to improvement requests; this makes it easier for reviewers to find open reviews which require their input.
+* Once a package is flagged as '''fedora-review +''' (or '''-'''), the Reviewer's job is done although they may be called upon to assist the Contributor with the import/build/update process and to ensure that the Contributor closes the ticket out when the process is complete.
+

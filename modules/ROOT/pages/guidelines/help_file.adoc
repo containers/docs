@@ -1,0 +1,29 @@
+:experimental:
+== Help File
+
+Just like traditional packages, containers need some "man page" information about how they are to be used, configured, and integrated into a larger stack. As such, a Help File is required as part of your container package unless you have supplied a "help" command instead.  This Help File, if present, will be supplied as part of the Container Review, and must have one of the two following names:
+
+* help.1
+* README.md
+
+It must also be COPYed into the container, to live in the base directory as `/help.1` or `README.md` so that it can be found by other users.
+
+Maintainers should include a copy of this help file in the base directory of their images.
+
+The help file should contain all of the following, depending on the requirements of the image:
+
+* A brief description of what service/software the image contains.
+* What purpose it fulfills in a larger infrastructure, if any.
+* If it is possible to configure the contained service the file '''must''' contain directions on how to do so.
+* If the container has any dependencies on other services (for example a database) the file '''must''' detail these.
+* If the container uses any volumes the file '''must''' detail what each one is for, see VOLUMES guidelines for more detail.
+* An explanation of each PORT the image listens on, including its protocol and purpose.
+* Links to any external documentation or software project pages, if such pages exist.
+* If the container has any special requirements (like lots of RAM, or sound server access), these '''must''' be listed.
+* If the application has major variants on how it can be built, information about these (e.g. mod_php vs. fastcgi) is '''required'''.
+
+Example Help File:
+[source]
+----
+include::{examplesdir}/help.1[]
+----

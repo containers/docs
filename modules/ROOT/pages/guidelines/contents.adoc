@@ -1,0 +1,70 @@
+== Image Contents
+
+
+=== Allowed Content
+
+Dockerfiles in Fedora should not contain net new code. The meaning of this is that software should be packaged properly as RPMs and placed in the Fedora repositories, Dockerfiles are simply a deliver mechanism for pre-defined "ready to run" configurations. Any content that is to accompany the Dockerfile must either be configuration files or startup/orchestration scripts. The goal of this is such that we follow the key points of the https://docs.pagure.org/releng/philosophy.html[Fedora Release Engineering Philosophy].
+
+
+=== File Placement
+
+There are no limits to the developer in deciding where to put the files that are required for starting the container.
+Those files might be either starting script, configuration files, template files that are evaluated once the container is started or anything else.
+General rule is that if the file can be provided by RPM, it should be provided by RPM. That is also reason why the files that are not provided by RPM
+should be put into the same location as if they would come from RPM, because they might eventually end in the RPM.
+
+Whatever the location will be, it is good idea to use similar location to similar container images, for example when a PostgreSQL container image
+uses some schema, MariaDB should use a similar schema, because that is what users will expect.
+
+The recommended location and naming scheme is the following (MySQL taken as an example):
+
+.Location of Support Files
+[cols="2*", options"header"]
+|===
+|Location
+|Description
+
+|`/usr/bin/run-mysqld`
+|Main executables that users usually use; one of them is usually set as default CMD
+
+|`/usr/libexec/container-setup`
+|Script that is run during container build to prepare container content; with this command we can run only one command instead of having a complicated scripts directly in the Dockerfile
+
+|`/etc/my.cnf`
+|Main config file for the daemon, the location of the config file should be the same as in RPM, because it is what users expect
+
+|`/usr/share/container-scripts/mysql/my-tuning.cnf.template`
+|Template for another config file, its content may be evaluated using `envsubst` utility, so concrete values are set according to environment variables given as argument to `docker run` command
+
+|`/var/lib/mysql/data`
+|Path to the data, that is often a docker VOLUME; the `data` part is important so the volume-mounted directory does not have a root-owned parent
+|===
+
+In order to have the Dockerfile clean, it is good practice to put all the files into one directory and use
+their final location under that directory. In case of the MySQL example above, it might look like this:
+
+```
+ls root/
+/etc/my.cnf
+/usr/bin/run-mysqld
+/usr/libexec/container-setup
+/usr/share/container-scripts/mysql/my-tuning.cnf.template
+/var/lib/mysql/data
+```
+
+Adding all the files in the Dockerfile can be then as simple as this:
+
+```
+COPY root /
+```
+
+The source files may be stored on FTP or some other medium that does not keep UNIX file attributes,
+so the Dockerfile or `container-setup` script should make sure the files will have proper attributes set,
+like that files in `/usr/bin/*` are executable, etc.
+
+
+=== Multi Container Services
+
+Each container image should provide only one "service" and multi-container services should be handled by an external orchestration tool at the users discretion such as [https://www.openshift.org/ OpenShift Origin], [http://kubernetes.io/ kubernetes], [http://deis.io/ deis], [https://docs.docker.com/swarm/ Docker Swarm], [https://docs.docker.com/compose/ Docker Compose], [https://dcos.io/ DC/OS], [https://www.cloudfoundry.org/ Cloud Foundry], [https://mesos.apache.org/ Apache Mesos], etc.
+
+These types of multi-container services should be documented in such a way that users can adapt them to their needs. One example would be using the [https://projectatomic.io Project Atomic] [https://github.com/projectatomic/nulecule nulecule] specification.
