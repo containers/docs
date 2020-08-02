@@ -1,14 +1,11 @@
 :experimental:
 == Help File
 
-Just like traditional packages, containers need some "man page" information about how they are to be used, configured, and integrated into a larger stack. As such, a Help File is required as part of your container package unless you have supplied a "help" command instead.  This Help File, if present, will be supplied as part of the Container Review, and must have one of the two following names:
+Just like traditional packages, containers need some "man page" information about how they are to be used, configured, and integrated into a larger stack. As such, a Help File is required as part of your container package unless you have supplied a "help" command instead.  This Help File, if present, will be supplied as part of the Container Review. It must be a MarkDown file, to be placed in the DistGit repository root prior to triggering your container builds, and it must have the following name:
 
-* help.1
-* README.md
+* help.md
 
-It must also be COPYed into the container, to live in the base directory as `/help.1` or `README.md` so that it can be found by other users.
-
-Maintainers should include a copy of this help file in the base directory of their images.
+OSBS will automatically convert this file into a man page and copy it to `/help.1` in the built image.
 
 The help file should contain all of the following, depending on the requirements of the image:
 
