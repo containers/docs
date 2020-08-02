@@ -5,4 +5,4 @@ Therefore, naming must follow the https://fedoraproject.org/wiki/Packaging:Namin
 
 None of the Fedora releases/DistGit-branch naming should be taken into consideration by the main container name, just as it is for RPM Package Naming.
 
-Fedora content is now "namespaced" in https://src.fedoraproject.org/projects/container/%2A[DigtGit], with the container namespace being 'container'.
+Fedora content is now "namespaced" in https://src.fedoraproject.org/projects/container/%2A[DistGit], with the container namespace being 'container'.
