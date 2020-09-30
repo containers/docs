@@ -4,6 +4,60 @@ Here you will find Documentation and Guidelines regarding creation, usage and ma
 
 Fedora is targeting to perform with any https://www.opencontainers.org/[OCI-compliant] container runtime implementation.
 
-== Goals of this Document
+== Getting started with Containers in Fedora
 
-== Target Audience
+=== Layered Image maintainance
+
+Layered Image in Fedora are container images that are using either the fedora or fedora-minimal base image. Dockerfiles for these images are maintained in Fedora's dist-git using the https://src.fedoraproject.org/projects/container/%2A[container namespace].
+
+You can maintain different version of an image using git branches, in dist-git each Fedora release has a branch, for example Fedora 32 has a git branch f32, Fedora 31 a f31 branch and so on .... The master branch is used for Fedora rawhide the development version of Fedora.
+
+==== Cloning a dist-git repository and building a image
+
+In order to build a layered image using Fedora's container build system, you first need to clone the image git repository
+
+```
+$ git clone https://src.fedoraproject.org/container/tools.git
+$ cd tools && ls
+Dockerfile  README.md  root
+```
+A command line tool called `fedpkg` is needed in order to trigger to build on Fedora you can install it as follow
+
+```
+$ sudo dnf install fedpkg
+```
+
+Once install you need to use your Fedora Account System username and password to authenticate with the buildsystem, this is done using kerberos
+
+```
+$ kinit username@FEDORAPROJECT.ORG
+Password for username@FEDORAPROJECT.ORG:
+```
+
+You can now trigger the build
+
+```
+$ fedpkg container-build
+Created task: 52510681
+Task info: https://koji.fedoraproject.org/koji/taskinfo?taskID=52510681
+Watching tasks (this may be safely interrupted)...
+52510681 buildContainer (noarch): free
+```
+
+You get a link to the builsystem task, this is useful in case you build fails and you need to inspect the logs.
+
+=== Creating a Container update
+
+To create an update for a container image you need to be the maintainer or co-maintainer of that image. For that you first need to be part of Fedora's https://fedoraproject.org/wiki/Join_the_package_collection_maintainers#Becoming_a_Fedora_Package_Collection_Maintainer[packager group].
+
+Once you have a build created you need to create an update in https://bodhi.fedoraproject.org/[Fedora's update system].
+
+After login in the web application, you create an a new update. In the new update from use the NVR (Name Version Release) of the container build to populate the "Builds" section.
+Then add some description and metadata as needed and submit the update.
+
+The container is available on Fedora's https://candidate-registry.fedoraproject.org/v2/_catalog?n=200[candidate-registry] for testing. When the update reach the stable state it will then be available on https://registry.fedoraproject.org/[registry.fedoraproject.org].
+
+
+=== Opening a Pull Request
+
+https://docs.fedoraproject.org/en-US/ci/pull-requests/[Pull Requests on dist-git]
