@@ -98,7 +98,9 @@ See LABEL SPECIFICATION below for more details on what's required for each of th
 The LABELs used here are meant to be a Fedora adaptation of the upstream https://projectatomic.io[Project Atomic] effort to define https://github.com/projectatomic/ContainerApplicationGenericLabels[Container Application Generic Labels] as well as http://docs.projectatomic.io/container-best-practices/[Container Best Practices].
 }}
 
-These LABELs should be defined in a single line of the Dockerfile such that they don't each lead to another layer in the build. The following is a very simple Dockerfile example containing the required LABELs:
+In the past these LABELs had to be defined in a single line of the Dockerfile so they would not lead to additional layers in the build. Recent OSBS versions squash all layers built on top of the parent image into a single layer, meaning there is no need to have all LABELs or RUN commands in a single line.
+
+The following is a very simple Dockerfile example containing the required LABELs:
 
 [source]
 ----
