@@ -12,22 +12,33 @@ Layered Image in Fedora are container images that are using either the fedora or
 
 You can maintain different version of an image using git branches, in dist-git each Fedora release has a branch, for example Fedora 32 has a git branch f32, Fedora 31 a f31 branch and so on .... The master branch is used for Fedora rawhide the development version of Fedora.
 
-==== Cloning a dist-git repository and building a image
+==== Install fedpkg
 
-In order to build a layered image using Fedora's container build system, you first need to clone the image git repository
-
-```
-$ git clone https://src.fedoraproject.org/container/tools.git
-$ cd tools && ls
-Dockerfile  README.md  root
-```
-A command line tool called `fedpkg` is needed in order to trigger to build on Fedora you can install it as follow
-
+`fedpkg` is used to interact with Fedora infrastructure.
+You can install it using the following command:
 ```
 $ sudo dnf install fedpkg
 ```
 
-Once install you need to use your Fedora Account System username and password to authenticate with the buildsystem, this is done using kerberos
+==== Cloning a dist-git repository and building a image
+
+In order to build a layered image using Fedora's container build system, you first need to clone the image git repository either using fedpkg or git:
+Here, the repository is called `tools`.
+All container repositories are in the link:https://src.fedoraproject.org/projects/container/%2A[container namespace] in the Fedora sources.
+
+```
+# Using fedpkg co <namespace>/<repository>
+$ fedpkg co container/tools
+
+# Using git with the clone URL:
+$ git clone https://src.fedoraproject.org/container/tools.git
+
+# Enter the repository:
+$ cd tools && ls
+Dockerfile  README.md  root
+```
+
+You need to authenticate with the buildsystem to trigger builds, this is done using kerberos
 
 ```
 $ kinit username@FEDORAPROJECT.ORG
