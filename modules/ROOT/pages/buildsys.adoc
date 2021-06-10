@@ -36,10 +36,11 @@ https://registry.fedoraproject.org/fedora:latest
 Fedora Layered Images will be available in their respective `$FGC` namespace which correlates to their DistGit branch and Koji tag. An example is as follows for the `f25` Fedora Generational Core and the cockpit container image.
 
 There are multiple tags applied to each image:
+
 * `Name:Version-Release` (including `$DISTTAG`)
 * `Name:Version`
 * `Name:latest`
-** The :latest tag can be omitted when issuing a `docker pull` command.
+** The `:latest` tag can be omitted when issuing a `docker pull` command.
 
 The latter two tags are updated in-place and a new execution of `docker pull` will get the latest image.
 
