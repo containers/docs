@@ -2,7 +2,7 @@ FROM registry.fedoraproject.org/fedora:rawhide
 
 ENV NAME=mycontainer VERSION=0 ARCH=x86_64
 LABEL   com.redhat.component="$NAME" \
-        name="$NAME" \
+        name="$FGC/$NAME" \
         version="$VERSION" \
         architecture="$ARCH" \
         run="podman run -p 1337:1337 IMAGE" \
