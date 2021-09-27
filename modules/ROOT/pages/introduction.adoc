@@ -59,7 +59,7 @@ You get a link to the builsystem task, this is useful in case you build fails an
 
 === Creating a Container update
 
-To create an update for a container image you need to be the maintainer or co-maintainer of that image. For that you first need to be part of Fedora's https://fedoraproject.org/wiki/Join_the_package_collection_maintainers#Becoming_a_Fedora_Package_Collection_Maintainer[packager group].
+To create an update for a container image you need to be the maintainer or co-maintainer of that image. For that you first need to be part of Fedora's https://docs.fedoraproject.org/en-US/package-maintainers/Joining_the_Package_Maintainers/[packager group].
 
 Once you have a build created you need to create an update in https://bodhi.fedoraproject.org/[Fedora's update system].
 

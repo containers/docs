@@ -1,6 +1,6 @@
 == Review Purpose
 
-In order for a new container Layered Image to be added to Fedora, the container layered image must first undertake a formal review much like the https://fedoraproject.org/wiki/Package_Review_Process[RPM Package Review process].
+In order for a new container Layered Image to be added to Fedora, the container layered image must first undertake a formal review much like the https://docs.fedoraproject.org/en-US/package-maintainers/Package_Review_Process/[RPM Package Review process].
 
 The purpose of this formal review is to try to ensure that the container layered image meets the quality control requirements for Fedora.
 
@@ -12,7 +12,7 @@ There are two roles in the review process, that of the contributor and that of t
 
 === Contributor
 
-A Contributor is defined as someone who wants to submit (and maintain) a new Container Layered Image in Fedora.  To become a contributor, you must follow the detailed instructions to https://fedoraproject.org/wiki/Join_the_package_collection_maintainers[Join the package collection maintainers].
+A Contributor is defined as someone who wants to submit (and maintain) a new Container Layered Image in Fedora.  To become a contributor, you must follow the detailed instructions to https://docs.fedoraproject.org/en-US/package-maintainers/Joining_the_Package_Maintainers/[Joining the Package Maintainers].
 
 As a Contributor, you should only be creating containers out of pre-existing software in the Fedora RPM repositories which adheres to the https://docs.fedoraproject.org/en-US/containers/guidelines/guidelines/[Guidelines].
 
@@ -22,7 +22,7 @@ As a Contributor, you should only be creating containers out of pre-existing sof
 
 * Fill out a http://red.ht/2qtgK7S[request for review in bugzilla]. Summary field needs to be in format of `Container Review Request:..`. If the `:` is omitted the fedpkg tool's request-repo will error out.
 
-* If you do not have any package or container layered image already in Fedora, this means you need a sponsor and to add FE-NEEDSPONSOR (Bugzilla id:177841) to the bugs being blocked by your review request. For more information read the [[How to get sponsored into the packager group]] wiki page.
+* If you do not have any package or container layered image already in Fedora, this means you need a sponsor and to add FE-NEEDSPONSOR (Bugzilla id:177841) to the bugs being blocked by your review request. For more information read the https://docs.fedoraproject.org/en-US/package-maintainers/How_to_Get_Sponsored_into_the_Packager_Group/[How to Get Sponsored into the Packager Group] page.
 
 * Wait for someone to review your Dockerfile! At this point in the process, the '''fedora-review flag''' is blank, meaning that no reviewer is assigned.
 
