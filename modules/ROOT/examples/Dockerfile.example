@@ -1,6 +1,8 @@
 FROM registry.fedoraproject.org/fedora:rawhide
 
-ENV NAME=mycontainer VERSION=0 ARCH=x86_64
+ARG NAME=mycontainer
+ARG VERSION=0
+ARG ARCH=x86_64
 LABEL   com.redhat.component="$NAME" \
         name="$FGC/$NAME" \
         version="$VERSION" \
