@@ -7,14 +7,22 @@ In order to get a better understanding of the big picture of how all this works,
 
 The Fedora Base Image provides information that can be used by the Layered Images via inherited Environment Variables:
 
-* `$DISTTAG` is defined just as it is for RPMs, but since Dockerfiles lack a mechanism similar to RPM Macros this is being stored in the base image such that it can be inherited by layered images.
+* `$DISTTAG` is defined just as it is for RPMs, but since Containerfiles (or Dockerfiles) lack a mechanism similar to RPM Macros this is being stored in the base image such that it can be inherited by layered images.
 
 
 == Fedora Container Registries and Updates
 
 In Fedora there are two Registries: candidate and stable.
 
-All Layered Image Builds end up in the candidate registry as soon as they are successful in the Fedora Layered Image Build System. These images can immediately be pulled (example using docker: `docker pull candidate-registry.fedoraproject.org/$FGC/$NAME:latest`).
+All Layered Image Builds end up in the candidate registry as soon as they are successful in the Fedora Layered Image Build System. These images can immediately be pulled. For example:
+
+```
+# With podman
+podman pull candidate-registry.fedoraproject.org/$FGC/$NAME:latest`
+
+# With Docker
+docker pull candidate-registry.fedoraproject.org/$FGC/$NAME:latest`
+```
 
 Gated releases will happen on a Two Week Cadence, alternating with the Fedora Two Week Atomic Host.
 
@@ -40,9 +48,9 @@ There are multiple tags applied to each image:
 * `Name:Version-Release` (including `$DISTTAG`)
 * `Name:Version`
 * `Name:latest`
-** The `:latest` tag can be omitted when issuing a `docker pull` command.
+** The `:latest` tag can be omitted when issuing a `podmand pull` or `docker pull` command.
 
-The latter two tags are updated in-place and a new execution of `docker pull` will get the latest image.
+The latter two tags are updated in-place and a new execution of `podman pull` or `docker pull` will get the latest image.
 
 ```
 https://candidate-registry.fedoraproject.org/cockpit:latest
