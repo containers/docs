@@ -1,11 +1,37 @@
 = Fedora Container & Tools Documentation
 
-link:introduction/index.html[Introduction & How to Get Started]
+This documentation covers the guidelines regarding creation, usage and maintainance of containers in Fedora.
 
-link:tools/index.html[Tools & Ecosystem]
+Fedora containers are expected to work with https://www.opencontainers.org/[OCI-compliant] container runtime implementation.
 
-link:guidelines/guidelines/index.html[Guidelines]
+== Where to find the containers
 
-link:buildsys/index.html[Build System]
+Container images built and released by the Fedora Project are available on our https://registry.fedoraproject.org[registry].
 
-link:community/index.html[Community]
+Note that the list also includes Flatpaks that are distributed as containers but are not expected to work as standalone containers.
+
+== Fedora Container SIG
+
+The Fedora Container SIG mission is to maintain, grow, guide and promote best practice of the development and release of container images.
+
+For suggestions, feedback, or to report issues, please contact the https://pagure.io/ContainerSIG/container-sig/issues[Fedora Container SIG].
+
+== Joining and participating in the Container SIG
+
+We don't have a formalized join process. Signing up on the mailing list, coming to Container SIG meetings, and joining our IRC channel are good ways to get involved.
+
+== Communication
+
+See the https://discussion.fedoraproject.org/tag/containers[forum], https://lists.fedoraproject.org/archives/list/container-sig@lists.fedorahosted.org/[mailing list] and https://pagure.io/ContainerSIG/container-sig[issue tracker].
+
+Fedora Container folks hang out on irc.libera.chat at #fedora-containers.
+
+Haven't used IRC for communication before? More information on how to use IRC is available https://fedoraproject.org/wiki/IRC[here].
+
+== Meetings
+
+The SIG does not have regular meeting, we prefer async communication via the mailing list or the forum. We are organizing Virtual Fedora Activity Day (VFAD) when needed to meet and focus on specific topics if needed.
+
+== Acknowledgments
+
+Certain portions of this documentation first appeared in the [citetitle]_Project Atomic Container Best Practices_, © 2014–2018 Project Atomic and others, published at link:++http://docs.projectatomic.io/container-best-practices/++[].

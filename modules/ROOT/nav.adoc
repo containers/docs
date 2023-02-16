@@ -1,15 +1,12 @@
-* xref:preface.adoc[Preface]
-* xref:introduction.adoc[Introduction]
-* xref:tools.adoc[Tools & Ecosystem]
-* xref:guidelines/guidelines.adoc[Guidelines]
+* xref:maintainer.adoc[Maintaining Fedora Containers]
+* Guidelines
 ** xref:guidelines/naming.adoc[Naming]
 ** xref:guidelines/creation.adoc[Dockerfile Creation]
 ** xref:guidelines/contents.adoc[Image Contents]
 ** xref:guidelines/help_file.adoc[Help File Creation]
 ** xref:guidelines/review.adoc[Review Process]
 * xref:buildsys.adoc[Build System]
-* xref:community.adoc[Community]
-** xref:faq.adoc[FAQ]
+* xref:tools.adoc[Tools & Ecosystem]
 * Terminology
 ** xref:terminology/dictionary.adoc[Dictionary]
 ** xref:terminology/use_cases.adoc[Container Use Cases]
