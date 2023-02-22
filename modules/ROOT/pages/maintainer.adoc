@@ -1,18 +1,12 @@
-= Introduction
+= Maintaining Fedora Containers
 
-Here you will find Documentation and Guidelines regarding creation, usage and maintainance of Containers in Fedora.
+== Layered Image maintainance
 
-Fedora is targeting to perform with any https://www.opencontainers.org/[OCI-compliant] container runtime implementation.
+Layered Image in Fedora are container images that are using either the fedora or fedora-minimal base image. Containerfiles (or Dockerfiles) for these images are maintained in Fedora's dist-git using the https://src.fedoraproject.org/projects/container/%2A[container namespace].
 
-== Getting started with Containers in Fedora
+You can maintain different version of an image using git branches, in dist-git each Fedora release has a branch, for example Fedora 32 has a git branch f32, Fedora 31 a f31 branch and so on. The main branch is used for Fedora rawhide the development version of Fedora.
 
-=== Layered Image maintainance
-
-Layered Image in Fedora are container images that are using either the fedora or fedora-minimal base image. Dockerfiles for these images are maintained in Fedora's dist-git using the https://src.fedoraproject.org/projects/container/%2A[container namespace].
-
-You can maintain different version of an image using git branches, in dist-git each Fedora release has a branch, for example Fedora 32 has a git branch f32, Fedora 31 a f31 branch and so on .... The master branch is used for Fedora rawhide the development version of Fedora.
-
-==== Install fedpkg
+== Install fedpkg
 
 `fedpkg` is used to interact with Fedora infrastructure.
 You can install it using the following command:
@@ -20,7 +14,7 @@ You can install it using the following command:
 $ sudo dnf install fedpkg
 ```
 
-==== Cloning a dist-git repository and building a image
+== Cloning a dist-git repository and building a image
 
 In order to build a layered image using Fedora's container build system, you first need to clone the image git repository either using fedpkg or git:
 Here, the repository is called `tools`.
@@ -57,7 +51,7 @@ Watching tasks (this may be safely interrupted)...
 
 You get a link to the builsystem task, this is useful in case you build fails and you need to inspect the logs.
 
-=== Creating a Container update
+== Creating a Container update
 
 To create an update for a container image you need to be the maintainer or co-maintainer of that image. For that you first need to be part of Fedora's https://docs.fedoraproject.org/en-US/package-maintainers/Joining_the_Package_Maintainers/[packager group].
 
@@ -68,7 +62,6 @@ Then add some description and metadata as needed and submit the update.
 
 The container is available on Fedora's https://candidate-registry.fedoraproject.org/v2/_catalog?n=200[candidate-registry] for testing. When the update reach the stable state it will then be available on https://registry.fedoraproject.org/[registry.fedoraproject.org].
 
-
-=== Opening a Pull Request
+== Opening a Pull Request
 
 https://docs.fedoraproject.org/en-US/ci/pull-requests/[Pull Requests on dist-git]
