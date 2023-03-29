@@ -116,7 +116,7 @@ Some additional details about how each label is to be populated.
 
 '''name''': Name of the image.  If the image replaces a standard RPM, it should have the exact same name of that RPM.  Otherwise, please see naming guidelines above.
 
-'''version''': Usually 0.  Populated from the ENV variable.  See "VERSIONING" below for explanation.
+'''version''': Usually 0.  Populated from the ARG variable.  See "VERSIONING" below for explanation.
 
 '''architecture''': usually "x86_64", unless the container image supports other/all architectures.
 
